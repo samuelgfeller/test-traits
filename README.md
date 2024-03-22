@@ -286,13 +286,12 @@ The attribute array can either contain fields and values to insert for one row
 which will insert multiple rows.
 
 Not all fields of the table need to be specified.
-The default values of the fixture will be used for the unspecified fields.
+The values of the first fixture `$records` entry will be used for the unspecified fields.
 
 The function returns an array with the inserted data including the auto-incremented id
 or an array of arrays with the row values from all the rows that were inserted.
 
 ```php
-
 <?php
 
 namespace App\Test\TestCase;
@@ -308,20 +307,24 @@ final class GetUsersTestAction extends TestCase
     public function testAction(): void
     {
         // Insert the fixture with the default values
-        $rowData = $this->insertFixture(new ExampleFixture());
+        $defaultUserRow = $this->insertFixture(new UserFixture());
+        // $defaultUserRow = ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe']
         
         // Insert the fixture with the given attributes
-        $rowData = $this->insertFixture(new ExampleFixture(), ['field_1' => 'value_1', ]);
+        $bobUserRow = $this->insertFixture(new UserFixture(), ['first_name' => 'Bob', ]);
+        // $bobUserRow = ['id' => 2, 'first_name' => 'Bob', 'last_name' => 'Doe']
         
         // Insert 2 rows with the given attributes 
-        $rowsData = $this->insertFixtureWithAttributes(
-            new ExampleFixture(), [
-                // field_1 of the first row will be 'value_1'
-                ['field_1' => 'value_1'], 
-                // field_1 of the second row will be 'value_2'
-                ['field_1' => 'value_2']
+        $jackAndAliceRows = $this->insertFixtureWithAttributes(
+            new UserFixture(), [
+                ['first_name' => 'Jack', 'last_name' => 'Brown'], 
+                ['first_name' => 'Alice']
             ]
         );
+        // $jackAndAliceRows = [
+        //      ['id' => 3, 'first_name' => 'Jack', 'last_name' => 'Brown'],
+        //      ['id' => 4, 'first_name' => 'Alice', 'last_name' => 'Doe']
+        // ]
         
         // ...
     }

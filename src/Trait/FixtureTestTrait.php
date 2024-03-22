@@ -15,9 +15,9 @@ trait FixtureTestTrait
      * Inserts fixtures, with given attributes or sets of attributes and returns rows with id.
      *
      * @param FixtureInterface $fixture The fixture instance
-     * @param array $attributes Attributes to override in the fixture
-     * Format: ['field_name' => 'expected_value', 'other_field_name' => 'other expected value', ] -> one insert
-     * alternatively [['field_name' => 'value', 'other_field_name',], ['field_name' => 'value',], ] -> two insets
+     * @param array $attributes Attributes to override in the fixture.
+     * ['field_name' => 'expected_value', 'other_field_name' => 'other expected value', ] -> one insert
+     * [['field_name' => 'value', 'other_field_name',], ['field_name' => 'value',], ] -> two insets
      *
      * @return array inserted row values
      */
