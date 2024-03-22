@@ -1,6 +1,6 @@
 <?php
 
-namespace Selective\TestTrait\Traits;
+namespace TestTraits\Trait;
 
 use PDO;
 use PDOStatement;
@@ -8,10 +8,8 @@ use UnexpectedValueException;
 
 trait DatabaseSchemaTestTrait
 {
-    /**
-     * @var string Path to schema.sql
-     */
-    protected $schemaFile = '';
+    // Path to schema.sql
+    protected string $schemaFile = '';
 
     /**
      * Create tables and insert fixtures.
@@ -22,7 +20,7 @@ trait DatabaseSchemaTestTrait
      *
      * @return void
      */
-    protected function setUpDatabase(string $schemaFile = null): void
+    protected function setUpDatabase(?string $schemaFile = null): void
     {
         if (isset($schemaFile)) {
             $this->schemaFile = $schemaFile;
@@ -210,7 +208,7 @@ trait DatabaseSchemaTestTrait
             $object = new $fixture();
 
             foreach ($object->records as $row) {
-                $this->insertFixture($object->table, $row);
+                $this->insertFixtureRow($object->table, $row);
             }
         }
     }
@@ -223,7 +221,7 @@ trait DatabaseSchemaTestTrait
      *
      * @return int|null last insert id of auto increment column otherwise null
      */
-    protected function insertFixture(string $table, array $row): ?int
+    protected function insertFixtureRow(string $table, array $row): ?int
     {
         $fields = array_keys($row);
 

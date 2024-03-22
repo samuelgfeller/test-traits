@@ -1,6 +1,6 @@
 <?php
 
-namespace Selective\TestTrait\Traits;
+namespace TestTraits\Trait;
 
 use PDO;
 use PDOStatement;

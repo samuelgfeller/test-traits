@@ -1,6 +1,6 @@
 <?php
 
-namespace Selective\TestTrait\Traits;
+namespace TestTraits\Trait;
 
 use Slim\App;
 

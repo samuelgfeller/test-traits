@@ -1,6 +1,6 @@
 <?php
 
-namespace Selective\TestTrait\Traits;
+namespace TestTraits\Trait;
 
 use BadMethodCallException;
 use Psr\Container\ContainerInterface;
@@ -11,10 +11,7 @@ use UnexpectedValueException;
  */
 trait ContainerTestTrait
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * Setup DI container.
@@ -27,7 +24,7 @@ trait ContainerTestTrait
      *
      * @return void
      */
-    protected function setUpContainer(ContainerInterface $container = null): void
+    protected function setUpContainer(?ContainerInterface $container = null): void
     {
         if ($container instanceof ContainerInterface) {
             $this->container = $container;

@@ -1,11 +1,12 @@
-# selective/test-traits
+# Test traits
 
-A collection of PHPUnit test traits.
+This is a clone from [selective/test-traits](https://github.com/selective-php/test-traits)
+and contains additional useful test traits for advanced PHPUnit testing.
 
-[![Latest Version on Packagist](https://img.shields.io/github/release/selective-php/test-traits.svg)](https://packagist.org/packages/selective/test-traits)
+[![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
-[![Build Status](https://github.com/selective-php/test-traits/workflows/build/badge.svg)](https://github.com/selective-php/test-traits/actions)
-[![Total Downloads](https://img.shields.io/packagist/dt/selective/test-traits.svg)](https://packagist.org/packages/selective/test-traits/stats)
+[![Build Status](https://github.com/samuelgfeller/test-traits/workflows/build/badge.svg)](https://github.com/samuelgfeller/test-traits/actions)
+[![Total Downloads](https://img.shields.io/packagist/dt/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits/stats)
 
 
 ## Requirements
@@ -15,10 +16,15 @@ A collection of PHPUnit test traits.
 ## Installation
 
 ```bash
-composer require selective/test-traits --dev
+composer require samuelgfeller/test-traits --dev
 ```
 
-## Traits
+## Traits documentation
+
+* [MailerTestTrait](#MailerTestTrait)
+* [HttpTestTrait](#HttpTestTrait)
+* [RouteTestTrait](#RouteTestTrait)
+* [FixtureTestTrait](#FixtureTestTrait)
 
 ### MailerTestTrait
 
@@ -86,8 +92,8 @@ PHPUnit test case:
 namespace App\Test\TestCase;
 
 use PHPUnit\Framework\TestCase;
-use Selective\TestTrait\Traits\ContainerTestTrait;
-use Selective\TestTrait\Traits\MailerTestTrait;
+use TestTraits\Trait\ContainerTestTrait;
+use TestTraits\Trait\MailerTestTrait;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
@@ -142,8 +148,8 @@ composer require nyholm/psr7
 namespace App\Test\TestCase;
 
 use PHPUnit\Framework\TestCase;
-use Selective\TestTrait\Traits\ContainerTestTrait;
-use Selective\TestTrait\Traits\HttpTestTrait;
+use TestTraits\Trait\ContainerTestTrait;
+use TestTraits\Trait\HttpTestTrait;
 
 class GetUsersTestAction extends TestCase
 {
@@ -174,9 +180,11 @@ Requirements
 
 * A Slim 4 framework application
 
-**Provided methods:**
+**Provided method:**
 
-* `urlFor(string $routeName, array $data = [], array $queryParams = []): string`
+```php
+urlFor(string $routeName, array $data = [], array $queryParams = []): string
+```
 
 **Usage:**
 
@@ -186,9 +194,9 @@ Requirements
 namespace App\Test\TestCase;
 
 use PHPUnit\Framework\TestCase;
-use Selective\TestTrait\Traits\ContainerTestTrait;
-use Selective\TestTrait\Traits\HttpTestTrait;
-use Selective\TestTrait\Traits\RouteTestTrait;
+use TestTraits\Trait\ContainerTestTrait;
+use TestTraits\Trait\HttpTestTrait;
+use TestTraits\Trait\RouteTestTrait;
 
 final class GetUsersTestAction extends TestCase
 {
@@ -211,6 +219,116 @@ Creating a request with a named route and query string parameters:
 $request = $this->createRequest('GET',  $this->urlFor('get-users'))
     ->withQueryParams($queryParams);
 ```
+
+## FixtureTestTrait
+
+A trait to create fixtures with test case relevant custom attribute and 
+insert them into the database.  
+
+**Provided method:**
+
+```php
+protected function insertFixture(FixtureInterface $fixture, array $attributes = []): array`
+```
+
+**Fixture:**
+
+Each fixture must have a property `$table` with the table name and an array `$records` with the
+default data to insert as well as getters for both properties.
+
+```php
+<?php
+
+namespace App\Test\Fixture;
+
+use TestTraits\Interface\FixtureInterface;
+
+class UserFixture implements FixtureInterface
+{
+    // Table name
+    public string $table = 'user';
+
+    // Database records
+    public array $records = [
+        [
+            'id' => 1,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ],
+        [
+            'id' => 2,
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+        ],
+    ];
+    
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+
+    public function getRecords(): array
+    {
+        return $this->records;
+    }
+}
+```
+
+**Insert fixture with custom attributes**
+
+To define custom data that should override the default values of the fixture class,
+the `insertFixture()` function can be used.  
+The first parameter is the fixture object, the second is optional and accepts an array of attributes.
+
+The attribute array can either contain fields and values to insert for one row
+(e.g. `['field_name' => 'value', 'other_field_name' => 'other_value', ]`) or an array of such arrays
+(e.g. `[['field_name' => 'value', 'field_name_2' => 'value2', ], ['field_name' => 'value', ], ]`)
+which will insert multiple rows.
+
+Not all fields of the table need to be specified.
+The default values of the fixture will be used for the unspecified fields.
+
+The function returns an array with the inserted data including the auto-incremented id
+or an array of arrays with the row values from all the rows that were inserted.
+
+```php
+
+<?php
+
+namespace App\Test\TestCase;
+
+use PHPUnit\Framework\TestCase;
+use TestTraits\Trait\FixtureTestTrait;
+
+final class GetUsersTestAction extends TestCase
+{
+    // ...
+    use FixtureTestTrait;
+
+    public function testAction(): void
+    {
+        // Insert the fixture with the default values
+        $rowData = $this->insertFixture(new ExampleFixture());
+        
+        // Insert the fixture with the given attributes
+        $rowData = $this->insertFixture(new ExampleFixture(), ['field_1' => 'value_1', ]);
+        
+        // Insert 2 rows with the given attributes 
+        $rowsData = $this->insertFixtureWithAttributes(
+            new ExampleFixture(), [
+                // field_1 of the first row will be 'value_1'
+                ['field_1' => 'value_1'], 
+                // field_1 of the second row will be 'value_2'
+                ['field_1' => 'value_2']
+            ]
+        );
+        
+        // ...
+    }
+}
+```
+
+The `FixtureTestTrait` uses the `DatabaseTestTrait` for the interaction with the database.
 
 ## License
 

@@ -55,7 +55,7 @@ return (new Config())
                 'import_classes' => true,
                 'import_constants' => null,
                 'import_functions' => null
-            ]
+            ],
         ]
     )
     ->setFinder(

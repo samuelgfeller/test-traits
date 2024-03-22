@@ -1,5 +1,5 @@
 {
-    "name": "selective/test-traits",
+    "name": "samuelgfeller/test-traits",
     "description": "A collection of PHPUnit test traits",
     "license": "MIT",
     "type": "library",
@@ -9,9 +9,10 @@
         "traits",
         "slim"
     ],
-    "homepage": "https://github.com/selective-php/test-traits",
+    "homepage": "https://github.com/samuelgfeller/test-traits",
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3",
@@ -24,12 +25,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Selective\\TestTrait\\": "src/"
+            "TestTraits\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Selective\\TestTrait\\Test\\": "tests/"
+            "TestTraits\\Test\\": "tests/"
         }
     },
     "config": {

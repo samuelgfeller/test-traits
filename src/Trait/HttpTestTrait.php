@@ -1,6 +1,6 @@
 <?php
 
-namespace Selective\TestTrait\Traits;
+namespace TestTraits\Trait;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -46,7 +46,7 @@ trait HttpTestTrait
      *
      * @return ServerRequestInterface The request
      */
-    protected function createFormRequest(string $method, $uri, array $data = null): ServerRequestInterface
+    protected function createFormRequest(string $method, $uri, ?array $data = null): ServerRequestInterface
     {
         $request = $this->createRequest($method, $uri);
 

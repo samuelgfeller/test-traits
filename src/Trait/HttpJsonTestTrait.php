@@ -1,6 +1,6 @@
 <?php
 
-namespace Selective\TestTrait\Traits;
+namespace TestTraits\Trait;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -8,11 +8,12 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * HTTP JSON Test Trait.
- *
- * Requires: HttpTestTrait, ArrayTestTrait
  */
 trait HttpJsonTestTrait
 {
+    use ArrayTestTrait;
+    use HttpTestTrait;
+
     /**
      * Create a JSON request.
      *
@@ -22,7 +23,7 @@ trait HttpJsonTestTrait
      *
      * @return ServerRequestInterface
      */
-    protected function createJsonRequest(string $method, $uri, array $data = null): ServerRequestInterface
+    protected function createJsonRequest(string $method, $uri, ?array $data = null): ServerRequestInterface
     {
         $request = $this->createRequest($method, $uri);
 
@@ -87,5 +88,25 @@ trait HttpJsonTestTrait
     protected function assertJsonValue($expected, string $path, ResponseInterface $response)
     {
         $this->assertSame($expected, $this->getArrayValue($this->getJsonData($response), $path));
+    }
+
+    /**
+     * Assert that key => values of given expected JSON are
+     * present in the response body.
+     * The expected json array doesn't have to contain all the keys
+     * returned in response. Only the ones provided are verified.
+     *
+     * @param array $expectedJson Expected JSON array
+     * @param ResponseInterface $response
+     *
+     * @return void
+     */
+    protected function assertPartialJsonData(array $expectedJson, ResponseInterface $response): void
+    {
+        $responseData = $this->getJsonData($response);
+
+        // Assert equals and not same to not fail if the order of the array keys is not correct
+        // array_intersect_key removes any keys from the $responseData that are not present in the $expectedJson array
+        $this->assertEquals($expectedJson, array_intersect_key($expectedJson, $responseData));
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-namespace Selective\TestTrait\Test;
+namespace TestTraits\Test;
 
 use DI\ContainerBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Selective\TestTrait\Traits\ContainerTestTrait;
-use Selective\TestTrait\Traits\MailerTestTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\EventListener\EnvelopeListener;
@@ -18,6 +16,8 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;
+use TestTraits\Trait\ContainerTestTrait;
+use TestTraits\Trait\MailerTestTrait;
 
 final class MailerTestTraitTest extends TestCase
 {
