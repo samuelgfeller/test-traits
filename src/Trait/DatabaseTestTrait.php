@@ -7,4 +7,5 @@ trait DatabaseTestTrait
     use DatabaseConnectionTestTrait;
     use DatabaseSchemaTestTrait;
     use DatabaseTableTestTrait;
+    use DatabaseTableExtensionTestTrait;
 }
