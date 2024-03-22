@@ -2,6 +2,8 @@
 
 namespace TestTraits\Trait;
 
+use PDO;
+
 /**
  * Extension to the DatabaseTableTestTrait.
  */
