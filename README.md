@@ -1,7 +1,7 @@
 # Test traits
 
-This is a clone from [selective/test-traits](https://github.com/selective-php/test-traits)
-and contains additional useful test traits for advanced PHPUnit testing.
+This is a clone from [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful 
+test traits, including a proper [fixture trait](#fixturetesttrait) for integration testing.
 
 [![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
