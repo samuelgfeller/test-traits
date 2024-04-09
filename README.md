@@ -28,7 +28,7 @@ composer require samuelgfeller/test-traits --dev
 
 ## FixtureTestTrait
 
-A trait designed to create and insert fixtures with data that is defined in the test function.  
+A trait designed to create and insert fixtures with data that can be defined in the test function.  
 
 **Provided method**
 

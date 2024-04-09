@@ -91,22 +91,36 @@ trait HttpJsonTestTrait
     }
 
     /**
-     * Assert that key => values of given expected JSON are
-     * present in the response body.
-     * The expected json array doesn't have to contain all the keys
-     * returned in response. Only the ones provided are verified.
+     * Asserts that the given JSON response data partially matches the expected JSON data.
      *
-     * @param array $expectedJson Expected JSON array
-     * @param ResponseInterface $response
+     * This function filters the response data to only contain the keys that are present in the expected JSON data.
+     * It then compares the filtered response data with the expected JSON data using the assertEquals method.
+     *
+     * @param array $expectedJsonData The expected JSON data. This can be a two-dimensional array and the keys
+     *                                of the subarrays are compared with the response data.
+     * @param array $responseJsonData The actual JSON data received in the response i.e. $this->getJsonData($response)
      *
      * @return void
      */
-    protected function assertPartialJsonData(array $expectedJson, ResponseInterface $response): void
+    protected function assertPartialJsonData(array $expectedJsonData, array $responseJsonData): void
     {
-        $responseData = $this->getJsonData($response);
+        // Filter the response data to only contain the keys that are present in the expected json data
+        $filteredResponseData = [];
 
-        // Assert equals and not same to not fail if the order of the array keys is not correct
-        // array_intersect_key removes any keys from the $responseData that are not present in the $expectedJson array
-        $this->assertEquals($expectedJson, array_intersect_key($expectedJson, $responseData));
+        foreach ($expectedJsonData as $key => $expectedValue) {
+            // If the expected array is an array and the corresponding key in the response data is also an array,
+            // then array from the json response is added to the filtered response data.
+            if (is_array($expectedValue) && isset($responseJsonData[$key]) && is_array($responseJsonData[$key])) {
+                // Only the keys that are present in the expected subarray are added (array_intersect_key).
+                $filteredResponseData[$key] = array_intersect_key($responseJsonData[$key], $expectedValue);
+            } else {
+                // If the value of the expected json array is not an array or the corresponding key in the response
+                // data is not an array, the corresponding key from the response data is added to the
+                // filtered response data. (if it exists)
+                $filteredResponseData[$key] = $responseJsonData[$key] ?? null;
+            }
+        }
+
+        $this->assertEquals($expectedJsonData, $filteredResponseData);
     }
 }
