@@ -32,7 +32,7 @@ trait DatabaseSchemaTestTrait
         $this->truncateTables();
 
         if (!empty($this->fixtures)) {
-            $this->insertFixtures($this->fixtures);
+            $this->insertDefaultFixtures($this->fixtures);
         }
     }
 
@@ -113,9 +113,9 @@ trait DatabaseSchemaTestTrait
      *
      * @param string $sql The sql
      *
+     * @return PDOStatement The statement
      * @throws UnexpectedValueException
      *
-     * @return PDOStatement The statement
      */
     private function createQueryStatement(string $sql): PDOStatement
     {
@@ -131,9 +131,9 @@ trait DatabaseSchemaTestTrait
     /**
      * Import table schema.
      *
+     * @return void
      * @throws UnexpectedValueException
      *
-     * @return void
      */
     protected function importSchema(): void
     {
@@ -202,7 +202,7 @@ trait DatabaseSchemaTestTrait
      *
      * @return void
      */
-    protected function insertFixtures(array $fixtures): void
+    protected function insertDefaultFixtures(array $fixtures): void
     {
         foreach ($fixtures as $fixture) {
             $object = new $fixture();

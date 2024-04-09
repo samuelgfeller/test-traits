@@ -90,7 +90,8 @@ The first parameter is the fixture object,
 the second is optional and accepts arrays of attributes.
 
 An array of attributes contains the data for one database row
-e.g. `['field_name' => 'value', 'other_field_name' => 'other_value']`.
+e.g.:   
+`['field_name' => 'value', 'other_field_name' => 'other_value']`.
 
 Multiple rows can also be inserted with one function call.
 Thanks to the argument unpacking operator,
