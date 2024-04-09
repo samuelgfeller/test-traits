@@ -113,9 +113,9 @@ trait DatabaseSchemaTestTrait
      *
      * @param string $sql The sql
      *
-     * @return PDOStatement The statement
      * @throws UnexpectedValueException
      *
+     * @return PDOStatement The statement
      */
     private function createQueryStatement(string $sql): PDOStatement
     {
@@ -131,9 +131,9 @@ trait DatabaseSchemaTestTrait
     /**
      * Import table schema.
      *
-     * @return void
      * @throws UnexpectedValueException
      *
+     * @return void
      */
     protected function importSchema(): void
     {
