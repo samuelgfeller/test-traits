@@ -15,21 +15,27 @@ trait FixtureTestTrait
      * Inserts fixtures, with given attributes or sets of attributes and returns rows with id.
      *
      * @param FixtureInterface $fixture The fixture instance
-     * @param array $attributes Attributes to override in the fixture.
-     * ['field_name' => 'expected_value', 'other_field_name' => 'other expected value', ] -> one insert
-     * [['field_name' => 'value', 'other_field_name',], ['field_name' => 'value',], ] -> two insets
+     * @param array ...$attributes Values to override in the fixture. With the argument unpacking operator
+     * multiple arrays of attributes can be provided in which case multiple inserts are made.
+     * One insert: ['name' => 'Bob']
+     * Three inserts: ['name' => 'Frank'], ['name' => 'Alice'], ['name' => 'Eve', 'role' => 'admin']
+     * Also allowed is one attribute that contains the sets for multiple inserts:
+     * Two inserts: [['name' => 'Frank'], ['name' => 'Alice']]
      *
      * @return array inserted row values
      */
-    protected function insertFixture(FixtureInterface $fixture, array $attributes = []): array
+    protected function insertFixture(FixtureInterface $fixture, array ...$attributes): array
     {
-        $attributesIsMultidimensional = true;
+        // If the first element of the first $attributes element is an array, then it's a 2-dimensional array
+        // that contains multiple sets of attributes.
+        if (isset($attributes[0][0]) && is_array($attributes[0][0])) {
+            // Make the sets of attributes provided direct descendants of the $attributes array
+            $attributes = $attributes[0];
+        }
 
-        // Check if attributes is an array with multiple sets of attributes or only one array of attributes
-        if (count($attributes) === count($attributes, COUNT_RECURSIVE)) {
-            // Put $attributes in an additional array
-            $attributes = [$attributes];
-            $attributesIsMultidimensional = false;
+        // If $attributes is empty, assign it a default value of one empty array
+        if (empty($attributes)) {
+            $attributes = [[]];
         }
 
         $recordsCollection = [];
@@ -42,7 +48,7 @@ trait FixtureTestTrait
         }
 
         // If only one row was inserted, return the row values
-        if ($attributesIsMultidimensional === false) {
+        if (count($attributes) === 1) {
             return $recordsCollection[0];
         }
 
