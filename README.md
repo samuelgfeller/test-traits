@@ -1,10 +1,7 @@
 # Test traits
 
-This is a clone from [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful
+This is a clone of [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful
 test traits, including a proper [fixture trait](#fixturetesttrait) for integration testing.
-
-Documentation on how to set up the test environment and write Integration and Unit tests using these traits:
-[**Writing Tests**](https://github.com/samuelgfeller/slim-example-project/wiki/Writing-Tests) 
 
 [![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
@@ -28,6 +25,9 @@ composer require samuelgfeller/test-traits --dev
 * [HttpTestTrait](#HttpTestTrait)
 * [RouteTestTrait](#RouteTestTrait)
 * [MailerTestTrait](#MailerTestTrait)
+
+Documentation on how to set up the test environment and write tests using these traits:
+[**Writing Tests**](https://github.com/samuelgfeller/slim-example-project/wiki/Writing-Tests).
 
 ## Migration from selective/test-traits
 If you were using the `selective/test-traits` package before and want to migrate to this library,
