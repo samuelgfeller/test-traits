@@ -3,10 +3,14 @@
 This is a clone from [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful
 test traits, including a proper [fixture trait](#fixturetesttrait) for integration testing.
 
+Documentation on how to set up the test environment and write Integration and Unit tests using these traits:
+[**Writing Tests**](https://github.com/samuelgfeller/slim-example-project/wiki/Writing-Tests) 
+
 [![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![Build Status](https://github.com/samuelgfeller/test-traits/workflows/build/badge.svg)](https://github.com/samuelgfeller/test-traits/actions)
 [![Total Downloads](https://img.shields.io/packagist/dt/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits/stats)
+
 
 ## Requirements
 
@@ -25,6 +29,18 @@ composer require samuelgfeller/test-traits --dev
 * [RouteTestTrait](#RouteTestTrait)
 * [MailerTestTrait](#MailerTestTrait)
 
+## Migration from selective/test-traits
+If you were using the `selective/test-traits` package before and want to migrate to this library,
+the following functions have to be renamed:
+
+* The function `insertFixtures` is now `insertDefaultFixtureRecords`.
+* The function `insertFixture` is now `insertFixtureRow` and 
+[`insertFixture`](#FixtureTestTrait) offers a more flexible way 
+to insert fixtures with optional custom attributes.
+
+Otherwise, the traits are the same and can be used in the same way. 
+This package will be kept in sync with `selective/test-traits`.
+
 ## FixtureTestTrait
 
 A trait designed to create and insert fixtures with data that can be defined in the test function.
@@ -32,7 +48,11 @@ A trait designed to create and insert fixtures with data that can be defined in 
 **Provided method**
 
 ```php
-protected function insertFixture(FixtureInterface $fixture, array $attributes = []): array`
+/**
+ * @param class-string $fixture
+ * @param array $attributes
+ */
+protected function insertFixture(string $fixture, array $attributes = []): array`
 ```
 
 **Usage**
@@ -40,24 +60,22 @@ protected function insertFixture(FixtureInterface $fixture, array $attributes = 
 ```php
 // Inserts the fixture with the first_name being "Bob" and the rest default values from the fixture.
 // Returns the inserted row data with the auto-incremented id.
-$bobUserRow = $this->insertFixture(new UserFixture(), ['first_name' => 'Bob']);
+$bobUserRow = $this->insertFixture(UserFixture::class, ['first_name' => 'Bob']);
 ```
 
 **Fixture**
 
 Each fixture must have a property `$table` with the table name and an array `$records` with the
-default data to insert as well as getters for both properties.
+default data to insert.
 
 ```php
 <?php
 
 namespace App\Test\Fixture;
 
-use TestTraits\Interface\FixtureInterface;
-
-class UserFixture implements FixtureInterface
+class UserFixture
 {
-    // Table name
+    // Database table name
     public string $table = 'user';
 
     // Database records
@@ -69,16 +87,6 @@ class UserFixture implements FixtureInterface
             'last_name' => 'Doe',
         ],
     ];
-    
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-
-    public function getRecords(): array
-    {
-        return $this->records;
-    }
 }
 ```
 
@@ -86,22 +94,21 @@ class UserFixture implements FixtureInterface
 
 To define custom data that should override the default values of the fixture class,
 the `insertFixture()` function can be used.  
-The first parameter is the fixture object,
-the second is optional and accepts arrays of attributes.
+The first parameter is the fixture fully qualified class name e.g. `UserFixture::class` and 
+the second (optional) is an array of attributes.
 
 An array of attributes contains the data for one database row
 e.g.:   
 `['field_name' => 'value', 'other_field_name' => 'other_value']`.
 
-Multiple rows can also be inserted with one function call.
-Thanks to the argument unpacking operator,
-more than one attribute array can be passed to the function as shown below.
+Multiple attribute arrays can be passed to the function to insert
+multiple rows with different data as shown below.
 
-Not all fields of the table need to be specified.
-The values of the first fixture `$records` entry will be used for the unspecified fields.
+Not all fields of the table need to be specified in the attribute array.
+For unspecified fields, the values of the first `$records` entry from the fixture will be used.
 
-The function returns an array with the inserted data including the auto-incremented id
-or an array for each row that was inserted.
+The function returns an array with the inserted data from the fixture including the auto-incremented id
+or an array for each row that was inserted when multiple rows were passed.
 
 ```php
 <?php
@@ -111,7 +118,7 @@ namespace App\Test\TestCase;
 use PHPUnit\Framework\TestCase;
 use TestTraits\Trait\FixtureTestTrait;
 
-final class GetUsersTestAction extends TestCase
+final class FetchUsersTestAction extends TestCase
 {
     // ...
     use FixtureTestTrait;
@@ -119,16 +126,16 @@ final class GetUsersTestAction extends TestCase
     public function testAction(): void
     {
         // Insert the fixture with the default values
-        $defaultUserRow = $this->insertFixture(new UserFixture());
+        $defaultUserRow = $this->insertFixture(UserFixture::class);
         // $defaultUserRow equals ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe']
         
         // Insert the fixture with the given attributes
-        $bobUserRow = $this->insertFixture(new UserFixture(), ['first_name' => 'Bob', ]);
+        $bobUserRow = $this->insertFixture(UserFixture::class, ['first_name' => 'Bob', ]);
         // $bobUserRow equals ['id' => 2, 'first_name' => 'Bob', 'last_name' => 'Doe']
         
         // Insert 2 rows with the given attributes 
         $jackAndAliceRows = $this->insertFixture(
-            new UserFixture(), 
+            UserFixture::class, 
             ['first_name' => 'Jack', 'last_name' => 'Brown'], 
             ['first_name' => 'Alice']
         );
@@ -141,9 +148,9 @@ final class GetUsersTestAction extends TestCase
         // Multiple rows can also be inserted when passing one attribute argument that contains
         // multiple arrays for each row
         $benAndEveRows = $this->insertFixture(
-            new UserFixture(), [
-                ['first_name' => 'Ben', 'last_name' => 'Smith'], 
-                ['first_name' => 'Eve', 'last_name' => 'Taylor']
+            UserFixture::class, [
+                ['first_name' => 'Jack', 'last_name' => 'Brown'], 
+                ['first_name' => 'Alice']
             ]
         );
         

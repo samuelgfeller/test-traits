@@ -2,7 +2,7 @@
 
 namespace TestTraits\Trait;
 
-use TestTraits\Interface\FixtureInterface;
+use InvalidArgumentException;
 
 /**
  * Fixture Test Trait.
@@ -14,7 +14,7 @@ trait FixtureTestTrait
     /**
      * Inserts fixtures, with given attributes or sets of attributes and returns rows with id.
      *
-     * @param FixtureInterface $fixture The fixture instance
+     * @param class-string $fixture The fixture instance
      * @param array ...$attributes Values to override in the fixture. With the argument unpacking operator
      * multiple arrays of attributes can be provided in which case multiple inserts are made.
      * One insert: ['name' => 'Bob']
@@ -22,9 +22,9 @@ trait FixtureTestTrait
      * Also allowed is one attribute that contains the sets for multiple inserts:
      * Two inserts: [['name' => 'Frank'], ['name' => 'Alice']]
      *
-     * @return array inserted row values
+     * @return array row values and insert id
      */
-    protected function insertFixture(FixtureInterface $fixture, array ...$attributes): array
+    protected function insertFixture(string $fixture, array ...$attributes): array
     {
         // If the first element of the first $attributes element is an array, then it's a 2-dimensional array
         // that contains multiple sets of attributes.
@@ -38,12 +38,23 @@ trait FixtureTestTrait
             $attributes = [[]];
         }
 
+        // Create fixture instance
+        $fixture = new $fixture();
+        // Check if the fixture instance contains the records and table properties which it must
+        if (!isset($fixture->records, $fixture->table)) {
+            throw new InvalidArgumentException(
+                $fixture::class . ' must contain the properties "records" and "table".'
+            );
+        }
+
         $recordsCollection = [];
         foreach ($attributes as $attributesForOneRow) {
             // Get row with given attributes
-            $row = $this->getFixtureRowWithCustomAttributes($attributesForOneRow, $fixture);
+            $row = $this->addCustomAttributesToRow($attributesForOneRow, $fixture->records[0]);
             // Insert fixture and get id
-            $row['id'] = (int)$this->insertFixtureRow($fixture->getTable(), $row);
+            $id = ['id' => (int)$this->insertFixtureRow($fixture->table, $row)];
+            // Make 'id' the first element in the row array
+            $row = array_merge($id, $attributesForOneRow);
             $recordsCollection[] = $row;
         }
 
@@ -59,17 +70,13 @@ trait FixtureTestTrait
     /**
      * Returns fixtures with given attributes and returns row values with id.
      *
-     * @param array $attributes
-     * @param FixtureInterface $fixture
+     * @param array $attributes Custom attributes
+     * @param array $row Row values
      *
      * @return array
      */
-    private function getFixtureRowWithCustomAttributes(
-        array $attributes,
-        FixtureInterface $fixture,
-    ): array {
-        $row = $fixture->getRecords()[0];
-
+    private function addCustomAttributesToRow(array $attributes, array $row): array
+    {
         // Unset id to prevent duplicate entries when id is not provided in the attributes and multiple inserts are made
         unset($row['id']);
 
@@ -79,6 +86,7 @@ trait FixtureTestTrait
             $row[$colum] = $value;
         }
 
+        // Return row enriched with given custom attributes
         return $row;
     }
 }

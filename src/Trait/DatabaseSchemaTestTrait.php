@@ -32,7 +32,7 @@ trait DatabaseSchemaTestTrait
         $this->truncateTables();
 
         if (!empty($this->fixtures)) {
-            $this->insertDefaultFixtures($this->fixtures);
+            $this->insertDefaultFixtureRecords($this->fixtures);
         }
     }
 
@@ -202,7 +202,7 @@ trait DatabaseSchemaTestTrait
      *
      * @return void
      */
-    protected function insertDefaultFixtures(array $fixtures): void
+    protected function insertDefaultFixtureRecords(array $fixtures): void
     {
         foreach ($fixtures as $fixture) {
             $object = new $fixture();
