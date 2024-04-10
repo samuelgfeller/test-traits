@@ -53,8 +53,8 @@ trait FixtureTestTrait
             $row = $this->addCustomAttributesToRow($attributesForOneRow, $fixture->records[0]);
             // Insert fixture and get id
             $id = ['id' => (int)$this->insertFixtureRow($fixture->table, $row)];
-            // Make 'id' the first element in the row array
-            $row = array_merge($id, $attributesForOneRow);
+            // Combine 'id' array and the row to make the id the first element in the row
+            $row = $id + $row;
             $recordsCollection[] = $row;
         }
 
