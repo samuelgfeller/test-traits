@@ -28,7 +28,9 @@ composer require samuelgfeller/test-traits --dev
 * [RouteTestTrait](#RouteTestTrait)
 * [MailerTestTrait](#MailerTestTrait)
 
-Documentation on how to set up the test environment and write tests using these traits:
+Documentation on how to set up the test environment: 
+[**Test Setup**](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup), 
+and write tests using these traits:
 [**Writing Tests**](https://github.com/samuelgfeller/slim-example-project/wiki/Writing-Tests).
 
 ## Migration from selective/test-traits
