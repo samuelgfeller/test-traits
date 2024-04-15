@@ -2,7 +2,8 @@
 
 This is a clone of [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful
 test traits, including a proper [fixture trait](#fixturetesttrait) for integration testing and
-`schema.sql` generation for the test database.
+[`schema.sql` generation](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup#generating-the-schema-file) 
+for the test database.
 
 [![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
