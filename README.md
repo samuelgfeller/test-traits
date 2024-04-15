@@ -1,7 +1,8 @@
 # Test traits
 
 This is a clone of [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful
-test traits, including a proper [fixture trait](#fixturetesttrait) for integration testing.
+test traits, including a proper [fixture trait](#fixturetesttrait) for integration testing and
+`schema.sql` generation for the test database.
 
 [![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
@@ -11,7 +12,7 @@ test traits, including a proper [fixture trait](#fixturetesttrait) for integrati
 
 ## Requirements
 
-* PHP 8.1+
+* PHP 8.2+
 
 ## Installation
 
@@ -82,6 +83,7 @@ class UserFixture
     public array $records = [
         // Only one record is relevant as the data is defined in the test function
         [
+            // The id 
             'id' => 1,
             'first_name' => 'John',
             'last_name' => 'Doe',
