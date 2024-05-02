@@ -1,19 +1,21 @@
 # Test traits
 
 This is a clone of [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful
-test traits, including a proper [fixture trait](#fixturetesttrait) for integration testing and
-[`schema.sql` generation](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup#generating-the-schema-file) 
-for the test database.
+test traits, including a proper [fixture trait](#fixturetesttrait) to easily insert fixtures with
+test-case-relevant (custom) attributes and
+[SQL schema generation](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup#generating-the-schema-file)
+to set up the database for integration tests.
 
 [![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![Build Status](https://github.com/samuelgfeller/test-traits/workflows/build/badge.svg)](https://github.com/samuelgfeller/test-traits/actions)
 [![Total Downloads](https://img.shields.io/packagist/dt/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits/stats)
 
-
 ## Requirements
 
 * PHP 8.2+
+* Composer
+* PHPUnit 10+
 
 ## Installation
 
@@ -21,28 +23,31 @@ for the test database.
 composer require samuelgfeller/test-traits --dev
 ```
 
-## Traits documentation
+## Documentation
 
+* [Migration from selective/test-traits](#migration-from-selectivetest-traits)
 * [FixtureTestTrait](#FixtureTestTrait)
 * [HttpTestTrait](#HttpTestTrait)
 * [RouteTestTrait](#RouteTestTrait)
 * [MailerTestTrait](#MailerTestTrait)
+* [SQL schema generation](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup#generating-the-schema-file)
 
-Documentation on how to set up the test environment: 
-[**Test Setup**](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup), 
-and write tests using these traits:
-[**Writing Tests**](https://github.com/samuelgfeller/slim-example-project/wiki/Writing-Tests).
+Set up the test environment: 
+[**Test Setup**](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup)   
+Write tests using these traits:
+[**Writing Tests**](https://github.com/samuelgfeller/slim-example-project/wiki/Writing-Tests)
 
 ## Migration from selective/test-traits
+
 If you were using the `selective/test-traits` package before and want to migrate to this library,
 the following functions have to be renamed:
 
 * The function `insertFixtures` is now `insertDefaultFixtureRecords`.
-* The function `insertFixture` is now `insertFixtureRow` and 
-[`insertFixture`](#FixtureTestTrait) offers a more flexible way 
-to insert fixtures with optional custom attributes.
+* The function `insertFixture` is now `insertFixtureRow` and
+  [`insertFixture`](#FixtureTestTrait) offers a more flexible way
+  to insert fixtures with optional custom attributes.
 
-Otherwise, the traits are the same and can be used in the same way. 
+Otherwise, the traits are the same and can be used in the same way.
 This package will be kept in sync with `selective/test-traits`.
 
 ## FixtureTestTrait
@@ -56,7 +61,7 @@ A trait designed to create and insert fixtures with data that can be defined in 
  * @param class-string $fixture
  * @param array $attributes
  */
-protected function insertFixture(string $fixture, array $attributes = []): array`
+protected function insertFixture(string $fixture, array $attributes = []): array
 ```
 
 **Usage**
@@ -99,7 +104,7 @@ class UserFixture
 
 To define custom data that should override the default values of the fixture class,
 the `insertFixture()` function can be used.  
-The first parameter is the fixture fully qualified class name e.g. `UserFixture::class` and 
+The first parameter is the fixture fully qualified class name e.g. `UserFixture::class` and
 the second (optional) is an array of attributes.
 
 An array of attributes contains the data for one database row
