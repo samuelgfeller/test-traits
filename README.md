@@ -1,10 +1,10 @@
 # Test traits
 
-This is a clone of [selective/test-traits](https://github.com/selective-php/test-traits) containing additional useful
-test traits, including a proper [fixture trait](#fixturetesttrait) to easily insert fixtures with
-test-case-relevant (custom) attributes and
-[SQL schema generation](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup#generating-the-schema-file)
-to set up the database for integration tests.
+This is a clone of [selective/test-traits](https://github.com/selective-php/test-traits) containing additional
+test traits, including a [fixture trait](#fixturetesttrait) to easily insert fixtures with
+test-case-relevant custom data and an
+[SQL schema generator](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup#generating-the-schema-file)
+to set up the test database for integration test.
 
 [![Latest Version on Packagist](https://img.shields.io/github/release/samuelgfeller/test-traits.svg)](https://packagist.org/packages/samuelgfeller/test-traits)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
@@ -32,19 +32,19 @@ composer require samuelgfeller/test-traits --dev
 * [MailerTestTrait](#MailerTestTrait)
 * [SQL schema generation](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup#generating-the-schema-file)
 
-Set up the test environment: 
+Test environment setup: 
 [**Test Setup**](https://github.com/samuelgfeller/slim-example-project/wiki/Test-Setup)   
 Write tests using these traits:
 [**Writing Tests**](https://github.com/samuelgfeller/slim-example-project/wiki/Writing-Tests)
 
 ## Migration from selective/test-traits
 
-If you were using the `selective/test-traits` package before and want to migrate to this library,
+If you have been using the `selective/test-traits` package and want to migrate to this library,
 the following functions have to be renamed:
 
-* The function `insertFixtures` is now `insertDefaultFixtureRecords`.
-* The function `insertFixture` is now `insertFixtureRow` and
-  [`insertFixture`](#FixtureTestTrait) offers a more flexible way
+* The function `insertFixtures` (with "s") is now `insertDefaultFixtureRecords`.
+* The old `insertFixture` function is now `insertFixtureRow` and
+  [`insertFixture`](#FixtureTestTrait) is another function with offers a flexible way
   to insert fixtures with optional custom attributes.
 
 Otherwise, the traits are the same and can be used in the same way.
