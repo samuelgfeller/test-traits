@@ -15,7 +15,7 @@ final readonly class SqlSchemaGenerator
 {
     public function __construct(
         private PDO $pdo,
-        private string $schemaOutputPath
+        private string $schemaOutputPath,
     ) {
     }
 

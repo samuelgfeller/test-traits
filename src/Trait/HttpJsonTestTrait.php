@@ -26,7 +26,7 @@ trait HttpJsonTestTrait
     protected function createJsonRequest(
         string $method,
         string|UriInterface $uri,
-        ?array $data = null
+        ?array $data = null,
     ): ServerRequestInterface {
         $request = $this->createRequest($method, $uri);
 

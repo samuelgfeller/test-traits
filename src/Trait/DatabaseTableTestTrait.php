@@ -26,7 +26,7 @@ trait DatabaseTableTestTrait
         string $table,
         int $id,
         ?array $fields = null,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertSame(
             $expectedRow,
@@ -81,7 +81,7 @@ trait DatabaseTableTestTrait
         string $table,
         int $id,
         ?array $fields = null,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertEquals(
             $expectedRow,
@@ -106,7 +106,7 @@ trait DatabaseTableTestTrait
         string $table,
         int $id,
         string $field,
-        string $message = ''
+        string $message = '',
     ): void {
         $actual = $this->getTableRowById($table, $id, [$field])[$field];
         $this->assertSame($expected, $actual, $message);

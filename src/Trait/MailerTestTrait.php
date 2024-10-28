@@ -88,7 +88,7 @@ trait MailerTestTrait
         RawMessage $email,
         string $headerName,
         string $expectedValue,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertThat($email, new EmailHeaderSame($headerName, $expectedValue), $message);
     }
@@ -97,7 +97,7 @@ trait MailerTestTrait
         RawMessage $email,
         string $headerName,
         string $expectedValue,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertThat(
             $email,
@@ -110,7 +110,7 @@ trait MailerTestTrait
         RawMessage $email,
         string $headerName,
         string $expectedValue,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertThat($email, new EmailAddressContains($headerName, $expectedValue), $message);
     }
