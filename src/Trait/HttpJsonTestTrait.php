@@ -23,8 +23,11 @@ trait HttpJsonTestTrait
      *
      * @return ServerRequestInterface
      */
-    protected function createJsonRequest(string $method, $uri, ?array $data = null): ServerRequestInterface
-    {
+    protected function createJsonRequest(
+        string $method,
+        string|UriInterface $uri,
+        ?array $data = null
+    ): ServerRequestInterface {
         $request = $this->createRequest($method, $uri);
 
         if ($data !== null) {
@@ -85,7 +88,7 @@ trait HttpJsonTestTrait
      *
      * @return void
      */
-    protected function assertJsonValue($expected, string $path, ResponseInterface $response)
+    protected function assertJsonValue(mixed $expected, string $path, ResponseInterface $response)
     {
         $this->assertSame($expected, $this->getArrayValue($this->getJsonData($response), $path));
     }

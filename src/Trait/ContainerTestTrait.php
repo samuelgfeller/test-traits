@@ -11,7 +11,7 @@ use UnexpectedValueException;
  */
 trait ContainerTestTrait
 {
-    protected ContainerInterface $container;
+    protected ?ContainerInterface $container;
 
     /**
      * Setup DI container.
@@ -45,9 +45,9 @@ trait ContainerTestTrait
      *
      * @return void
      */
-    protected function setContainerValue(string $name, $value): void
+    protected function setContainerValue(string $name, mixed $value): void
     {
-        if (method_exists($this->container, 'set')) {
+        if (isset($this->container) && method_exists($this->container, 'set')) {
             $this->container->set($name, $value);
 
             return;
