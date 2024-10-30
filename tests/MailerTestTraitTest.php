@@ -33,6 +33,7 @@ final class MailerTestTraitTest extends TestCase
      */
     public function testMailer(): void
     {
+        // In a real application, the container is created in the AppTestTrait file
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions(
             [

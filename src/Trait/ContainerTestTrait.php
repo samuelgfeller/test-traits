@@ -11,7 +11,7 @@ use UnexpectedValueException;
  */
 trait ContainerTestTrait
 {
-    protected ?ContainerInterface $container;
+    protected ContainerInterface $container;
 
     /**
      * Setup DI container.
