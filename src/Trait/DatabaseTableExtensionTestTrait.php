@@ -15,7 +15,9 @@ trait DatabaseTableExtensionTestTrait
      * @param string $table Table name
      * @param string $whereColumn The column name of the select query
      * @param mixed $whereValue The value that will be searched for
-     * @param string|array $selectClause Fields array or string after SELECT and before FROM like 'id, name'
+     * @param string|array $selectClause Fields array or string after "SELECT" and before "FROM" like 'id, `name`'
+     * WARNING: the column names passed as array or string must be escaped with ` if they match a reserved word
+     * Example: ['`column_name`', '`column_name_2`'] or '`column_name`, `column_name_2`'
      *
      * @return array[] array or rows
      */
@@ -40,7 +42,9 @@ trait DatabaseTableExtensionTestTrait
      *
      * @param string $table Table name
      * @param string $whereString
-     * @param string|array $selectClause Fields array or string after SELECT and before FROM like 'id, name'
+     * @param string|array $selectClause Fields array or string after "SELECT" and before "FROM" like 'id, `name`'
+     * WARNING: the column names passed as array or string must be escaped with ` if they match a reserved word
+     * Example: ['`column_name`', '`column_name_2`'] or '`column_name`, `column_name_2`'
      * @param string $joinString
      *
      * @return array[] array or rows
@@ -84,7 +88,9 @@ trait DatabaseTableExtensionTestTrait
      * @param string $table Table to look into
      * @param string $whereColumn The column of the search query
      * @param mixed $whereValue The value that will be searched for
-     * @param string|array|null $selectClause Fields array or string after SELECT and before FROM like 'id, name'
+     * @param string|array|null $selectClause Fields array or string after "SELECT" and before "FROM" like 'id, `name`'
+     * WARNING: the column names passed as array or string must be escaped with ` if they match a reserved word
+     * Example: ['`column_name`', '`column_name_2`'] or '`column_name`, `column_name_2`'
      * @param string $message Optional message
      *
      * @return void
@@ -101,7 +107,7 @@ trait DatabaseTableExtensionTestTrait
             $table,
             $whereColumn,
             $whereValue,
-            $selectClause ?: array_keys($expectedRow)
+            $selectClause ?: array_map(fn ($key) => "`$key`", array_keys($expectedRow))
         );
         foreach ($rows as $row) {
             $this->assertSame(

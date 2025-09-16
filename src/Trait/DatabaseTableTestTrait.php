@@ -16,7 +16,9 @@ trait DatabaseTableTestTrait
      * @param array $expectedRow Row expected to find
      * @param string $table Table to look into
      * @param int $id The primary key
-     * @param string|array|null $selectClause Fields array or string after SELECT and before FROM like 'id, name'
+     * @param string|array|null $selectClause Fields array or string after "SELECT" and before "FROM" like 'id, `name`'
+     * WARNING: the column names passed as array or string must be escaped with ` if they match a reserved word
+     * Example: ['`column_name`', '`column_name_2`'] or '`column_name`, `column_name_2`'
      * @param string $message Optional message
      *
      * @return void
@@ -30,7 +32,11 @@ trait DatabaseTableTestTrait
     ): void {
         $this->assertSame(
             $expectedRow,
-            $this->getTableRowById($table, $id, $selectClause ?: array_keys($expectedRow)),
+            $this->getTableRowById(
+                $table,
+                $id,
+                $selectClause ?: array_map(fn ($key) => "`$key`", array_keys($expectedRow))
+            ),
             $message
         );
     }
@@ -40,7 +46,9 @@ trait DatabaseTableTestTrait
      *
      * @param string $table Table name
      * @param int $id The primary key value
-     * @param string|array $selectClause Fields string after SELECT and before FROM like 'id, name'
+     * @param string|array $selectClause Fields array or string after "SELECT" and before "FROM" like 'id, `name`'
+     * WARNING: the column names passed as array or string must be escaped with ` if they match a reserved word
+     * Example: ['`column_name`', '`column_name_2`'] or '`column_name`, `column_name_2`'
      *
      * @throws DomainException
      *
@@ -71,7 +79,9 @@ trait DatabaseTableTestTrait
      * @param array $expectedRow Row expected to find
      * @param string $table Table to look into
      * @param int $id The primary key
-     * @param string|array|null $selectClause Fields array or string after SELECT and before FROM like 'id, name'
+     * @param string|array|null $selectClause Fields array or string after "SELECT" and before "FROM" like 'id, `name`'
+     * WARNING: the column names passed as array or string must be escaped with ` if they match a reserved word
+     * Example: ['`column_name`', '`column_name_2`'] or '`column_name`, `column_name_2`'
      * @param string $message Optional message
      *
      * @return void
@@ -85,7 +95,11 @@ trait DatabaseTableTestTrait
     ): void {
         $this->assertEquals(
             $expectedRow,
-            $this->getTableRowById($table, $id, $selectClause ?: array_keys($expectedRow)),
+            $this->getTableRowById(
+                $table,
+                $id,
+                $selectClause ?: array_map(fn ($key) => "`$key`", array_keys($expectedRow))
+            ),
             $message
         );
     }
