@@ -16,7 +16,7 @@ trait DatabaseTableTestTrait
      * @param array $expectedRow Row expected to find
      * @param string $table Table to look into
      * @param int $id The primary key
-     * @param array|null $fields The columns
+     * @param string|array|null $selectClause Fields array or string after SELECT and before FROM like 'id, name'
      * @param string $message Optional message
      *
      * @return void
@@ -25,12 +25,12 @@ trait DatabaseTableTestTrait
         array $expectedRow,
         string $table,
         int $id,
-        ?array $fields = null,
+        string|array|null $selectClause = null,
         string $message = '',
     ): void {
         $this->assertSame(
             $expectedRow,
-            $this->getTableRowById($table, $id, $fields ?: array_keys($expectedRow)),
+            $this->getTableRowById($table, $id, $selectClause ?: array_keys($expectedRow)),
             $message
         );
     }
@@ -40,26 +40,25 @@ trait DatabaseTableTestTrait
      *
      * @param string $table Table name
      * @param int $id The primary key value
-     * @param array|null $fields The array of fields
+     * @param string|array $selectClause Fields string after SELECT and before FROM like 'id, name'
      *
      * @throws DomainException
      *
      * @return array Row
      */
-    protected function getTableRowById(string $table, int $id, ?array $fields = null): array
+    protected function getTableRowById(string $table, int $id, string|array $selectClause = '*'): array
     {
-        $sql = sprintf('SELECT * FROM `%s` WHERE `id` = :id', $table);
+        // Convert the select clause array to string if needed
+        $selectClause = is_array($selectClause) ? implode(', ', $selectClause) : $selectClause;
+
+        $sql = "SELECT $selectClause FROM `$table` WHERE `id` = :id";
         $statement = $this->createPreparedStatement($sql);
         $statement->execute(['id' => $id]);
 
         $row = $statement->fetch(PDO::FETCH_ASSOC);
 
         if (empty($row)) {
-            throw new DomainException(sprintf('Row not found: %s', $id));
-        }
-
-        if ($fields) {
-            $row = array_intersect_key($row, array_flip($fields));
+            throw new DomainException("Row not found: $table.$id");
         }
 
         return $row;
@@ -67,11 +66,12 @@ trait DatabaseTableTestTrait
 
     /**
      * Asserts that a given table equals the given row.
+     * Only the keys of the $expectedRow are used to compare.
      *
      * @param array $expectedRow Row expected to find
      * @param string $table Table to look into
      * @param int $id The primary key
-     * @param array|null $fields The columns
+     * @param string|array|null $selectClause Fields array or string after SELECT and before FROM like 'id, name'
      * @param string $message Optional message
      *
      * @return void
@@ -80,12 +80,12 @@ trait DatabaseTableTestTrait
         array $expectedRow,
         string $table,
         int $id,
-        ?array $fields = null,
+        string|array|null $selectClause = null,
         string $message = '',
     ): void {
         $this->assertEquals(
             $expectedRow,
-            $this->getTableRowById($table, $id, $fields ?: array_keys($expectedRow)),
+            $this->getTableRowById($table, $id, $selectClause ?: array_keys($expectedRow)),
             $message
         );
     }
@@ -102,13 +102,13 @@ trait DatabaseTableTestTrait
      * @return void
      */
     protected function assertTableRowValue(
-        $expected,
+        mixed $expected,
         string $table,
         int $id,
         string $field,
         string $message = '',
     ): void {
-        $actual = $this->getTableRowById($table, $id, [$field])[$field];
+        $actual = $this->getTableRowById($table, $id, $field)[$field];
         $this->assertSame($expected, $actual, $message);
     }
 
@@ -135,11 +135,11 @@ trait DatabaseTableTestTrait
      */
     protected function getTableRowCount(string $table): int
     {
-        $sql = sprintf('SELECT COUNT(*) AS counter FROM `%s`;', $table);
+        $sql = "SELECT COUNT(*) AS amount FROM `$table`;";
         $statement = $this->createQueryStatement($sql);
         $row = $statement->fetch(PDO::FETCH_ASSOC) ?: [];
 
-        return (int)($row['counter'] ?? 0);
+        return (int)($row['amount'] ?? 0);
     }
 
     /**
@@ -166,7 +166,7 @@ trait DatabaseTableTestTrait
      */
     protected function findTableRowById(string $table, int $id): array
     {
-        $sql = sprintf('SELECT * FROM `%s` WHERE `id` = :id', $table);
+        $sql = "SELECT * FROM `$table` WHERE `id` = :id";
         $statement = $this->createPreparedStatement($sql);
         $statement->execute(['id' => $id]);
 

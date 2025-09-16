@@ -10,12 +10,12 @@ use PDO;
 trait DatabaseTableExtensionTestTrait
 {
     /**
-     * Fetch rows by given column.
+     * Fetch rows by the given column.
      *
      * @param string $table Table name
      * @param string $whereColumn The column name of the select query
      * @param mixed $whereValue The value that will be searched for
-     * @param array|null $fields The array of fields
+     * @param string|array $selectClause Fields array or string after SELECT and before FROM like 'id, name'
      *
      * @return array[] array or rows
      */
@@ -23,54 +23,42 @@ trait DatabaseTableExtensionTestTrait
         string $table,
         string $whereColumn,
         mixed $whereValue,
-        ?array $fields = null,
+        string|array $selectClause = '*',
     ): array {
-        $sql = sprintf('SELECT * FROM `%s` WHERE `%s` = :whereValue', $table, $whereColumn);
+        // Convert array to string if needed
+        $selectClause = is_array($selectClause) ? implode(', ', $selectClause) : $selectClause;
+
+        $sql = "SELECT $selectClause FROM `$table` WHERE $whereColumn = :whereValue";
         $statement = $this->createPreparedStatement($sql);
         $statement->execute(['whereValue' => $whereValue]);
 
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        $rowsWithFilteredFields = null;
-        if ($fields) {
-            foreach ($rows as $row) {
-                $rowsWithFilteredFields[] = array_intersect_key($row, array_flip($fields));
-            }
-        }
-
-        return $rowsWithFilteredFields ?? $rows;
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Fetch rows by given where array.
+     * Fetch rows by the given "where" array.
      *
      * @param string $table Table name
      * @param string $whereString
-     * @param array|null $fields The array of fields
+     * @param string|array $selectClause Fields array or string after SELECT and before FROM like 'id, name'
      * @param string $joinString
      *
      * @return array[] array or rows
      */
     protected function findTableRowsWhere(
         string $table,
-        string $whereString,
-        ?array $fields = null,
+        string $whereString = 'true',
+        string|array $selectClause = '*',
         string $joinString = '',
     ): array {
-        $sql = "SELECT $table.* FROM `$table` $joinString WHERE $whereString;";
+        // Convert array to string if needed
+        $selectClause = is_array($selectClause) ? implode(', ', $selectClause) : $selectClause;
+
+        $sql = "SELECT $selectClause FROM `$table` $joinString WHERE $whereString;";
         $statement = $this->createPreparedStatement($sql);
         $statement->execute();
 
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        $rowsWithFilteredFields = null;
-        if ($fields) {
-            foreach ($rows as $row) {
-                $rowsWithFilteredFields[] = array_intersect_key($row, array_flip($fields));
-            }
-        }
-
-        return $rowsWithFilteredFields ?? $rows;
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -82,7 +70,7 @@ trait DatabaseTableExtensionTestTrait
      */
     protected function findLastInsertedTableRow(string $table): array
     {
-        $sql = sprintf('SELECT * FROM `%s` ORDER BY id DESC LIMIT 1', $table);
+        $sql = "SELECT * FROM `$table` ORDER BY id DESC LIMIT 1";
         $statement = $this->createPreparedStatement($sql);
         $statement->execute();
 
@@ -96,7 +84,7 @@ trait DatabaseTableExtensionTestTrait
      * @param string $table Table to look into
      * @param string $whereColumn The column of the search query
      * @param mixed $whereValue The value that will be searched for
-     * @param array|null $fields The array of fields
+     * @param string|array|null $selectClause Fields array or string after SELECT and before FROM like 'id, name'
      * @param string $message Optional message
      *
      * @return void
@@ -106,10 +94,15 @@ trait DatabaseTableExtensionTestTrait
         string $table,
         string $whereColumn,
         mixed $whereValue,
-        ?array $fields = null,
+        string|array|null $selectClause = null,
         string $message = '',
     ): void {
-        $rows = $this->findTableRowsByColumn($table, $whereColumn, $whereValue, $fields ?: array_keys($expectedRow));
+        $rows = $this->findTableRowsByColumn(
+            $table,
+            $whereColumn,
+            $whereValue,
+            $selectClause ?: array_keys($expectedRow)
+        );
         foreach ($rows as $row) {
             $this->assertSame(
                 $expectedRow,
