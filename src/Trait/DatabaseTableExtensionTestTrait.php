@@ -30,7 +30,7 @@ trait DatabaseTableExtensionTestTrait
         // Convert array to string if needed
         $selectClause = is_array($selectClause) ? implode(', ', $selectClause) : $selectClause;
 
-        $sql = "SELECT $selectClause FROM `$table` WHERE $whereColumn = :whereValue";
+        $sql = "SELECT $selectClause FROM `$table` WHERE `$whereColumn` = :whereValue";
         $statement = $this->createPreparedStatement($sql);
         $statement->execute(['whereValue' => $whereValue]);
 
